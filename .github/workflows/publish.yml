@@ -1,0 +1,56 @@
+name: Publish NQX
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Prepare public build
+        shell: bash
+        run: |
+          set -euo pipefail
+          SITE_DIR="$RUNNER_TEMP/site"
+          mkdir -p "$SITE_DIR"
+          curl -L --fail --retry 3 'https://sdmntprnznorth.oaiusercontent.com/files/00000000-7544-820b-80fc-711d37de9754/raw?se=2026-10-04T18%3A01%3A38Z&sp=r&sv=2026-02-06&sr=b&scid=07c35ae0-12d3-5d3a-bb98-6fce5f63eabd&skoid=f5e14fda-2af7-44a3-9d18-d372ffcad871&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-03T19%3A02%3A32Z&ske=2026-10-04T19%3A02%3A32Z&sks=b&skv=2026-02-06&sig=9whz4W5EODk77eSSVPTXPMzlA/Pif9pGOoO2dGRoFqs%3D' -o "$RUNNER_TEMP/build.zip"
+          unzip -q "$RUNNER_TEMP/build.zip" -d "$RUNNER_TEMP/artifact"
+          tar -xf "$RUNNER_TEMP/artifact/artifact.tar" -C "$SITE_DIR"
+          grep -rlZ '/NQX/' "$SITE_DIR" --exclude='*.png' --exclude='*.webp' 2>/dev/null | xargs -0 -r sed -i 's#/NQX/#/-NQX-PUBLIC/#g'
+
+          find . -mindepth 1 -maxdepth 1 ! -name '.git' -exec rm -rf {} +
+          cp -a "$SITE_DIR/." .
+
+      - name: Commit public build only
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'Publish NQX public build'
+          git push
+
+      - name: Enable GitHub Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ runner.temp }}/site
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
