@@ -30,7 +30,7 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Install dependencies
         run: npm install
@@ -48,8 +48,8 @@ jobs:
           rm -rf "$SITE_DIR"
           mkdir -p "$SITE_DIR"
           cp -a dist/. "$SITE_DIR/"
-          grep -rlZ '/NQX/' "$SITE_DIR" --exclude='*.png' --exclude='*.webp' 2>/dev/null | xargs -0 -r sed -i 's#/NQX/#/-NQX-PUBLIC/#g'
-          grep -rlZ "url('/nqx-field-bg.webp')" "$SITE_DIR" 2>/dev/null | xargs -0 -r sed -i "s#url('/nqx-field-bg.webp')#url('/-NQX-PUBLIC/nqx-field-bg.webp')#g"
+          (grep -rlZ '/NQX/' "$SITE_DIR" --exclude='*.png' --exclude='*.webp' 2>/dev/null || true) | xargs -0 -r sed -i 's#/NQX/#/-NQX-PUBLIC/#g'
+          (grep -rlZ "url('/nqx-field-bg.webp')" "$SITE_DIR" 2>/dev/null || true) | xargs -0 -r sed -i "s#url('/nqx-field-bg.webp')#url('/-NQX-PUBLIC/nqx-field-bg.webp')#g"
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
