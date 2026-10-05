@@ -3,6 +3,7 @@ name: Publish NQX
 on:
   push:
     branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -20,20 +21,33 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout NQX source
+        uses: actions/checkout@v4
+        with:
+          repository: peace01271989-source/NQX
+          ref: main
 
-      - name: Prepare public build
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build latest NQX
+        env:
+          GITHUB_PAGES: 'true'
+        run: npm run build
+
+      - name: Prepare public site
         shell: bash
         run: |
           set -euo pipefail
           SITE_DIR="$RUNNER_TEMP/site"
+          rm -rf "$SITE_DIR"
           mkdir -p "$SITE_DIR"
-          curl -L --fail --retry 3 \
-            -H 'Accept: application/vnd.github+json' \
-            -H 'X-GitHub-Api-Version: 2022-11-28' \
-            'https://api.github.com/repos/peace01271989-source/NQX/actions/artifacts/11351125917/zip' \
-            -o "$RUNNER_TEMP/build.zip"
-          unzip -q "$RUNNER_TEMP/build.zip" -d "$SITE_DIR"
+          cp -a dist/. "$SITE_DIR/"
           grep -rlZ '/NQX/' "$SITE_DIR" --exclude='*.png' --exclude='*.webp' 2>/dev/null | xargs -0 -r sed -i 's#/NQX/#/-NQX-PUBLIC/#g'
           grep -rlZ "url('/nqx-field-bg.webp')" "$SITE_DIR" 2>/dev/null | xargs -0 -r sed -i "s#url('/nqx-field-bg.webp')#url('/-NQX-PUBLIC/nqx-field-bg.webp')#g"
 
