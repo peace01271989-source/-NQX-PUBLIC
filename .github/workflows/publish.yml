@@ -33,10 +33,8 @@ jobs:
           tar -xf "$RUNNER_TEMP/artifact/artifact.tar" -C "$SITE_DIR"
           grep -rlZ '/NQX/' "$SITE_DIR" --exclude='*.png' --exclude='*.webp' 2>/dev/null | xargs -0 -r sed -i 's#/NQX/#/-NQX-PUBLIC/#g'
 
-      - name: Enable GitHub Pages
+      - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
-        with:
-          enablement: true
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
