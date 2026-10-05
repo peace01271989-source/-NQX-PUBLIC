@@ -27,10 +27,9 @@ jobs:
         run: |
           set -euo pipefail
           SITE_DIR="$RUNNER_TEMP/site"
-          mkdir -p "$SITE_DIR" "$RUNNER_TEMP/artifact"
-          curl -L --fail --retry 3 'https://sdmntprnznorth.oaiusercontent.com/files/00000000-0794-820b-80e8-396cfe35ceb9/raw?se=2026-10-05T01%3A49%3A44Z&sp=r&sv=2026-02-06&sr=b&scid=9df560db-e4bc-578e-b09e-300a5bb19a4f&skoid=f5e14fda-2af7-44a3-9d18-d372ffcad871&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-04T21%3A56%3A30Z&ske=2026-10-05T21%3A56%3A30Z&sks=b&skv=2026-02-06&sig=42QB0eZrRPxpO1RZIHYq6jowKWk2g4ocqk14c8ZRZn0%3D' -o "$RUNNER_TEMP/build.zip"
-          unzip -q "$RUNNER_TEMP/build.zip" -d "$RUNNER_TEMP/artifact"
-          tar -xf "$RUNNER_TEMP/artifact/artifact.tar" -C "$SITE_DIR"
+          mkdir -p "$SITE_DIR"
+          curl -L --fail --retry 3 'https://sdmntprnznorth.oaiusercontent.com/files/00000000-5804-820b-a86a-f59b13f77675/raw?se=2026-10-05T02%3A29%3A04Z&sp=r&sv=2026-02-06&sr=b&scid=0c4a5c46-85ba-57cd-9df8-4cba6f67ecb7&skoid=f5e14fda-2af7-44a3-9d18-d372ffcad871&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-05T00%3A19%3A39Z&ske=2026-10-06T00%3A19%3A39Z&sks=b&skv=2026-02-06&sig=ndvPLFcSqPvWnb4ROaf9P7Om5YGVIzxz7Oby3IhWxwI%3D' -o "$RUNNER_TEMP/build.zip"
+          unzip -q "$RUNNER_TEMP/build.zip" -d "$SITE_DIR"
           grep -rlZ '/NQX/' "$SITE_DIR" --exclude='*.png' --exclude='*.webp' 2>/dev/null | xargs -0 -r sed -i 's#/NQX/#/-NQX-PUBLIC/#g'
 
       - name: Configure GitHub Pages
