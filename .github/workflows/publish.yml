@@ -28,7 +28,7 @@ jobs:
           set -euo pipefail
           SITE_DIR="$RUNNER_TEMP/site"
           mkdir -p "$SITE_DIR" "$RUNNER_TEMP/artifact"
-          curl -L --fail --retry 3 'https://sdmntprnznorth.oaiusercontent.com/files/00000000-85b0-820b-9253-68de7bac07c2/raw?se=2026-10-04T18%3A09%3A39Z&sp=r&sv=2026-02-06&sr=b&scid=98668468-5617-5f2c-a49e-3beed816b483&skoid=f5e14fda-2af7-44a3-9d18-d372ffcad871&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-03T22%3A55%3A46Z&ske=2026-10-04T22%3A55%3A46Z&sks=b&skv=2026-02-06&sig=HW%2Bzfi%2BrkNjwICuJX5a63Hk1Vh9v9UKISftBqGCxyt8%3D' -o "$RUNNER_TEMP/build.zip"
+          curl -L --fail --retry 3 'https://sdmntprnznorth.oaiusercontent.com/files/00000000-7080-820b-a442-e2debd79eb16/raw?se=2026-10-05T01%3A37%3A25Z&sp=r&sv=2026-02-06&sr=b&scid=765235f5-645d-5cf1-ac3a-5646018f62de&skoid=f5e14fda-2af7-44a3-9d18-d372ffcad871&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-04T22%3A24%3A36Z&ske=2026-10-05T22%3A24%3A36Z&sks=b&skv=2026-02-06&sig=WBp5E8mCI6jwcEjsFB4eaGcjST/ly5dGgWagMy7aAX4%3D' -o "$RUNNER_TEMP/build.zip"
           unzip -q "$RUNNER_TEMP/build.zip" -d "$RUNNER_TEMP/artifact"
           tar -xf "$RUNNER_TEMP/artifact/artifact.tar" -C "$SITE_DIR"
           grep -rlZ '/NQX/' "$SITE_DIR" --exclude='*.png' --exclude='*.webp' 2>/dev/null | xargs -0 -r sed -i 's#/NQX/#/-NQX-PUBLIC/#g'
