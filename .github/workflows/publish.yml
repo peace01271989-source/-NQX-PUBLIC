@@ -28,9 +28,14 @@ jobs:
           set -euo pipefail
           SITE_DIR="$RUNNER_TEMP/site"
           mkdir -p "$SITE_DIR"
-          curl -L --fail --retry 3 'https://sdmntprnznorth.oaiusercontent.com/files/00000000-5804-820b-a86a-f59b13f77675/raw?se=2026-10-05T02%3A29%3A04Z&sp=r&sv=2026-02-06&sr=b&scid=0c4a5c46-85ba-57cd-9df8-4cba6f67ecb7&skoid=f5e14fda-2af7-44a3-9d18-d372ffcad871&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-05T00%3A19%3A39Z&ske=2026-10-06T00%3A19%3A39Z&sks=b&skv=2026-02-06&sig=ndvPLFcSqPvWnb4ROaf9P7Om5YGVIzxz7Oby3IhWxwI%3D' -o "$RUNNER_TEMP/build.zip"
+          curl -L --fail --retry 3 \
+            -H 'Accept: application/vnd.github+json' \
+            -H 'X-GitHub-Api-Version: 2022-11-28' \
+            'https://api.github.com/repos/peace01271989-source/NQX/actions/artifacts/11351125917/zip' \
+            -o "$RUNNER_TEMP/build.zip"
           unzip -q "$RUNNER_TEMP/build.zip" -d "$SITE_DIR"
           grep -rlZ '/NQX/' "$SITE_DIR" --exclude='*.png' --exclude='*.webp' 2>/dev/null | xargs -0 -r sed -i 's#/NQX/#/-NQX-PUBLIC/#g'
+          grep -rlZ "url('/nqx-field-bg.webp')" "$SITE_DIR" 2>/dev/null | xargs -0 -r sed -i "s#url('/nqx-field-bg.webp')#url('/-NQX-PUBLIC/nqx-field-bg.webp')#g"
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
