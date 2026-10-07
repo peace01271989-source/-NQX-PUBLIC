@@ -1,0 +1,32 @@
+name: Sync LRA administrator dashboard
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/sync-lra-admin.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch LRA administrator dashboard
+        run: |
+          mkdir -p lra/admin
+          curl -fsSL "https://raw.githubusercontent.com/peace01271989-source/NQX/main/public/lra/admin/index.html" -o lra/admin/index.html
+      - name: Commit dashboard
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add lra/admin/index.html
+          if git diff --cached --quiet; then
+            echo 'No changes needed'
+          else
+            git commit -m 'Publish LRA administrator dashboard'
+            git push
+          fi
