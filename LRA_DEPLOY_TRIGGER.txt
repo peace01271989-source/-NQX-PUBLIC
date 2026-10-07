@@ -1,0 +1,1 @@
+Deploy LRA natural Japanese copy from NQX commit 2ad19cf50c05b9b361bb1ecbfc98b82c4989883d
